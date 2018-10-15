@@ -28,7 +28,7 @@ export class LoginV1 extends React.Component {
 
   getThemeImageSource = (theme) => (
     theme.name === 'light' ?
-      require('../../assets/images/backgroundLoginV1.png') : require('../../assets/images/backgroundLoginV1DarkTheme.png')
+      require('../../assets/images/splash1.png') : require('../../assets/images/backgroundLoginV1DarkTheme.png')
   );
 
   renderImage = () => {

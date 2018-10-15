@@ -37,7 +37,7 @@ export const MainRoutes = [
   },
   {
     id: 'SocialMenu',
-    title: 'Social',
+    title: 'Profile',
     icon: FontIcons.profile,
     screen: Screens.SocialMenu,
     children: [
@@ -87,7 +87,7 @@ export const MainRoutes = [
   },
   {
     id: 'ArticlesMenu',
-    title: 'Articles',
+    title: 'Orders',
     icon: FontIcons.article,
     screen: Screens.ArticleMenu,
     children: [
@@ -181,7 +181,7 @@ export const MainRoutes = [
   },
   {
     id: 'EcommerceMenu',
-    title: 'Ecommerce',
+    title: 'Payments',
     icon: FontIcons.card,
     screen: Screens.EcommerceMenu,
     children: [
@@ -260,7 +260,7 @@ export const MainRoutes = [
 
 const menuRoutes = _.cloneDeep(MainRoutes);
 menuRoutes.unshift({
-  id: 'GridV2',
+  id: 'GridV1',
   title: 'Start',
   screen: Screens.GridV2,
   children: [],
