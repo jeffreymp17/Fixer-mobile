@@ -34,7 +34,7 @@ export class SocialMenu extends React.Component {
     navigation: NavigationType.isRequired,
   };
   static navigationOptions = {
-    title: 'Social'.toUpperCase(),
+    title: 'Profile'.toUpperCase(),
   };
   render = () => (
     <CategoryMenu navigation={this.props.navigation} items={Routes.SocialRoutes} />
@@ -46,7 +46,7 @@ export class ArticleMenu extends React.Component {
     navigation: NavigationType.isRequired,
   };
   static navigationOptions = {
-    title: 'Articles'.toUpperCase(),
+    title: 'Orders'.toUpperCase(),
   };
   render = () => (
     <CategoryMenu navigation={this.props.navigation} items={Routes.ArticleRoutes} />
@@ -94,7 +94,7 @@ export class EcommerceMenu extends React.Component {
     navigation: NavigationType.isRequired,
   };
   static navigationOptions = {
-    title: 'Ecommerce'.toUpperCase(),
+    title: 'Payments'.toUpperCase(),
   };
   render = () => (
     <CategoryMenu navigation={this.props.navigation} items={Routes.EcommerceRoutes} />

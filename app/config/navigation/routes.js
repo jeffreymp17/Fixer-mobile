@@ -43,11 +43,11 @@ export const MainRoutes = [
     children: [
       {
         id: 'ProfileV1',
-        title: 'User Profile V1',
+        title: 'Your profile',
         screen: Screens.ProfileV1,
         children: [],
       },
-      {
+    /*  {
         id: 'ProfileV2',
         title: 'User Profile V2',
         screen: Screens.ProfileV2,
@@ -82,7 +82,7 @@ export const MainRoutes = [
         title: 'Feed',
         screen: Screens.Feed,
         children: [],
-      },
+      },*/
     ],
   },
   {
@@ -91,7 +91,7 @@ export const MainRoutes = [
     icon: FontIcons.article,
     screen: Screens.ArticleMenu,
     children: [
-      {
+    /*  {
         id: 'Articles1',
         title: 'Article List V1',
         screen: Screens.Articles1,
@@ -108,14 +108,14 @@ export const MainRoutes = [
         title: 'Article List V3',
         screen: Screens.Articles3,
         children: [],
-      },
+      },*/
       {
         id: 'Articles4',
-        title: 'Article List V4',
+        title: 'History of orders',
         screen: Screens.Articles4,
         children: [],
       },
-      {
+    /*  {
         id: 'Blogposts',
         title: 'Blogposts',
         screen: Screens.Blogposts,
@@ -126,7 +126,7 @@ export const MainRoutes = [
         title: 'Article View',
         screen: Screens.Article,
         children: [],
-      },
+      },*/
     ],
   },
   {
