@@ -4,6 +4,7 @@ import {
   Image,
   Dimensions,
   Keyboard,
+  ScrollView,
 } from 'react-native';
 import {
   RkButton,
@@ -18,6 +19,8 @@ import { GradientButton } from '../../components/gradientButton';
 import { scaleModerate, scaleVertical } from '../../utils/scale';
 import NavigationType from '../../config/navigation/propTypes';
 import {getUserLogged} from '../../api/ProfileService';
+import { UIConstants } from '../../config/appConstants';
+
 export class LoginV1 extends React.Component {
   componentDidMount(){
     //getUserLogged();
@@ -35,24 +38,40 @@ export class LoginV1 extends React.Component {
   static navigationOptions = {
     header: null,
   };
+
   login=()=>{
-    const apiURL='http://192.168.1.11:8000/api/';
+    const apiURL='http://192.168.1.4:8000/api/';
     const {userEmail,userPassword}=this.state;
-    const user={email:userEmail,
+    const user={
+      email:userEmail,
       password:userPassword,
-      app:"mobile"}
+      app:"mobile"
+    };
     Keyboard.dismiss();
     fetch(`${apiURL}login`,{
-      method:"POST",
-      header:{"Content-Type":"application/json"},
-      body:JSON.stringify(user)
-  }).then((response)=>response.json()).then((responseJson)=>{
-   console.log("USER",user);
-    console.log(responseJson);
-  }).catch((error) => {
+      method:'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(user),
+    })
+    .then(response => {
+      const statusCode = response.status;
+      const data = response.json();
+      return Promise.all([statusCode, data]);
+    })
+    .then(([statusCode,data]) => {
+      console.log("status",statusCode);
+      console.log("data",data);
+      if(statusCode==200){
+        this.props.navigation.navigate('GridV1');
+      }
+    })
+    .catch((error) =>{
       console.error(error);
     });
   }
+
 
   getThemeImageSource = (theme) => (
     theme.name === 'light' ?
@@ -82,6 +101,8 @@ export class LoginV1 extends React.Component {
   };
 
   render = () => (
+    <ScrollView>
+
     <RkAvoidKeyboard
       onStartShouldSetResponder={() => true}
       onResponderRelease={() => Keyboard.dismiss()}
@@ -117,6 +138,7 @@ export class LoginV1 extends React.Component {
         </View>
       </View>
     </RkAvoidKeyboard>
+    </ScrollView>
   )
 }
 
