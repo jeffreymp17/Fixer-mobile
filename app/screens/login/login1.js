@@ -4,6 +4,7 @@ import {
   Image,
   Dimensions,
   Keyboard,
+  ScrollView,
 } from 'react-native';
 import {
   RkButton,
@@ -17,14 +18,60 @@ import { FontAwesome } from '../../assets/icons';
 import { GradientButton } from '../../components/gradientButton';
 import { scaleModerate, scaleVertical } from '../../utils/scale';
 import NavigationType from '../../config/navigation/propTypes';
+import {getUserLogged} from '../../api/ProfileService';
+import { UIConstants } from '../../config/appConstants';
 
 export class LoginV1 extends React.Component {
+  componentDidMount(){
+    //getUserLogged();
+  }
+  constructor(props){
+    super(props)
+    this.state={
+      userEmail:'',
+      userPassword:''
+    }
+  }
   static propTypes = {
     navigation: NavigationType.isRequired,
   };
   static navigationOptions = {
     header: null,
   };
+
+  login=()=>{
+    const apiURL='http://192.168.1.4:8000/api/';
+    const {userEmail,userPassword}=this.state;
+    const user={
+      email:userEmail,
+      password:userPassword,
+      app:"mobile"
+    };
+    Keyboard.dismiss();
+    fetch(`${apiURL}login`,{
+      method:'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(user),
+    })
+    .then(response => {
+      const statusCode = response.status;
+      const data = response.json();
+      return Promise.all([statusCode, data]);
+    })
+    .then(([statusCode,data]) => {
+      console.log("status",statusCode);
+      console.log("data",data);
+      if(statusCode==200){
+        this.props.navigation.navigate('GridV1');
+      }
+    })
+    .catch((error) =>{
+      console.error(error);
+    });
+  }
+
 
   getThemeImageSource = (theme) => (
     theme.name === 'light' ?
@@ -54,6 +101,8 @@ export class LoginV1 extends React.Component {
   };
 
   render = () => (
+    <ScrollView>
+
     <RkAvoidKeyboard
       onStartShouldSetResponder={() => true}
       onResponderRelease={() => Keyboard.dismiss()}
@@ -71,12 +120,12 @@ export class LoginV1 extends React.Component {
             <RkText rkType='awesome hero accentColor'>{FontAwesome.facebook}</RkText>
           </RkButton>
         </View>
-        <RkTextInput rkType='rounded' placeholder='Username' />
-        <RkTextInput rkType='rounded' placeholder='Password' secureTextEntry />
+        <RkTextInput rkType='rounded' placeholder='Username' onChangeText={userEmail=>this.setState({userEmail})} />
+        <RkTextInput rkType='rounded' placeholder='Password' secureTextEntry onChangeText={userPassword=>this.setState({userPassword})} />
         <GradientButton
           style={styles.save}
           rkType='large'
-          onPress={this.onLoginButtonPressed}
+          onPress={this.login}
           text='LOGIN'
         />
         <View style={styles.footer}>
@@ -89,6 +138,7 @@ export class LoginV1 extends React.Component {
         </View>
       </View>
     </RkAvoidKeyboard>
+    </ScrollView>
   )
 }
 
