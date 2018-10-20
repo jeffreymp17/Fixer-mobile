@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { FontIcons } from '../../assets/icons';
 import * as Screens from '../../screens/index';
 
-export const MainRoutes = [
+export var MainRoutes = [
   {
     id: 'LoginMenu',
     title: 'Auth',
@@ -167,7 +167,7 @@ export const MainRoutes = [
       children: [],
     }],
   },
-  {
+/*  {
     id: 'WalkthroughMenu',
     title: 'Walkthroughs',
     icon: FontIcons.mobile,
@@ -178,7 +178,7 @@ export const MainRoutes = [
       screen: Screens.WalkthroughScreen,
       children: [],
     }],
-  },
+  },*/
   {
     id: 'EcommerceMenu',
     title: 'Payments',
