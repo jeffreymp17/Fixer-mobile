@@ -11,8 +11,9 @@ import { MainRoutes } from '../../config/navigation/routes';
 import NavigationType from '../../config/navigation/propTypes';
 
 const paddingValue = 8;
-
+var auxRoutes=[];
 export class GridV1 extends React.Component {
+
   static propTypes = {
     navigation: NavigationType.isRequired,
   };
@@ -20,8 +21,10 @@ export class GridV1 extends React.Component {
     title: 'Menu'.toUpperCase(),
   };
 
+
   constructor(props) {
     super(props);
+    this.filterRoutes();
     const screenWidth = Dimensions.get('window').width;
     this.itemSize = {
       width: (screenWidth - (paddingValue * 6)) / 2,
@@ -30,10 +33,32 @@ export class GridV1 extends React.Component {
   }
 
   onItemPressed = (item) => {
-    this.props.navigation.navigate(item.id);
+    this.props.navigation.navigate(item);
   };
+  filterRoutes=()=>{
+    for(i =0;i<MainRoutes.length;i++){
+      switch(MainRoutes[i].id){
+        case "EcommerceMenu":
+        auxRoutes.push(MainRoutes[i]);
+        break;
+        case "ArticlesMenu":
+        auxRoutes.push(MainRoutes[i]);
+        break;
+        case "SocialMenu":
+        auxRoutes.push(MainRoutes[i]);
+        break;
+        case "OtherMenu":
+        auxRoutes.push(MainRoutes[i]);
+        break;
+        default:
+        break;
+      }
+    }
+    console.log(auxRoutes);
+    console.log("Main routes:",MainRoutes);
+  }
 
-  renderItems = () => MainRoutes.map(route => (
+  renderItems = () => auxRoutes.map(route => (
     <RkButton
       rkType='square shadow'
       style={{ ...this.itemSize }}

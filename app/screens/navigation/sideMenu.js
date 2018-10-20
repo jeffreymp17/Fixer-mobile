@@ -15,11 +15,13 @@ import {
 import { MainRoutes } from '../../config/navigation/routes';
 import { FontAwesome } from '../../assets/icons';
 import NavigationType from '../../config/navigation/propTypes';
+var auxRoutes=[];
 
 export class SideMenu extends React.Component {
   static propTypes = {
     navigation: NavigationType.isRequired,
   };
+
 
   onMenuItemPressed = (item) => {
     this.props.navigation.navigate(item.id);
@@ -62,7 +64,7 @@ export class SideMenu extends React.Component {
         showsVerticalScrollIndicator={false}>
         <View style={[styles.container, styles.content]}>
           {this.renderIcon()}
-          <RkText rkType='logo'>UI Kitten</RkText>
+          <RkText rkType='logo'>Fixer</RkText>
         </View>
         {this.renderMenu()}
       </ScrollView>
