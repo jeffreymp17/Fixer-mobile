@@ -18,6 +18,7 @@ import { ProgressBar } from '../../components';
 import { KittenTheme } from '../../config/theme';
 import { scale, scaleVertical } from '../../utils/scale';
 import NavigationType from '../../config/navigation/propTypes';
+import { AsyncStorage } from "react-native"
 
 const delay = 500;
 
@@ -27,6 +28,7 @@ export class SplashScreen extends React.Component {
   };
   state = {
     progress: 0,
+    user:null,
   };
 
   componentDidMount() {
@@ -50,13 +52,25 @@ export class SplashScreen extends React.Component {
   };
 
   onLoaded = () => {
+    AsyncStorage.getItem('currentUser', (err, result) => {
+     console.log("CURRENT USER",result);
+     this.state.user=result;
+     if(result!=null){
+       this.redirecToSpecificaView("Home");
+     }else{
+      this.redirecToSpecificaView("Login");
+     }
+   });
+
+  };
+  redirecToSpecificaView = (route) =>{
     StatusBar.setHidden(false, 'slide');
     const toHome = StackActions.reset({
       index: 0,
-      actions: [NavigationActions.navigate({ routeName: 'Login' })],
+      actions: [NavigationActions.navigate({ routeName: route })],
     });
     this.props.navigation.dispatch(toHome);
-  };
+  }
 
   render = () => (
     <View style={styles.container}>

@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   View,
-  ScrollView,
+  ScrollView,AsyncStorage
 } from 'react-native';
 import {
   RkText,
@@ -9,6 +9,7 @@ import {
 } from 'react-native-ui-kitten';
 import { Avatar } from '../../components/avatar';
 import { Gallery } from '../../components/gallery';
+
 import { data } from '../../data/';
 import formatNumber from '../../utils/textUtils';
 import NavigationType from '../../config/navigation/propTypes';
@@ -20,30 +21,43 @@ export class ProfileV1 extends React.Component {
   static navigationOptions = {
     title: 'User Profile'.toUpperCase(),
   };
+  componentDidMount(){
+    this.getUser();
+  }
+  getUser=()=>{
+    AsyncStorage.getItem('currentUser', (err, result) => {
+     console.log("CURRENT USER",JSON.parse(result));
+     let user=JSON.parse(result);
+     this.setState({'data':user.data});
+     console.log("in state",this.state.data);
+  })
 
-  state = {
-    data: undefined,
-  };
+  }
 
   constructor(props) {
     super(props);
-    const id = this.props.navigation.getParam('id', 1);
-    this.state.data = data.getUser(id);
-  }
+    this.state={
+      data:{
+
+      }
+    }
+
+
+}
 
   render = () => (
     <ScrollView style={styles.root}>
       <View style={[styles.header, styles.bordered]}>
-        <Avatar img={this.state.data.photo} rkType='big' />
-        <RkText rkType='header2'>{`${this.state.data.firstName} ${this.state.data.lastName}`}</RkText>
+        <Avatar img={'https://www.w3schools.com/w3css/img_lights.jpg'} rkType='big' />
+        <RkText rkType='header2'>{`${this.state.data.name} ${this.state.data.lastname}`}</RkText>
       </View>
       <View style={[styles.userInfo, styles.bordered]}>
         <View style={styles.section}>
-          <RkText rkType='header3' style={styles.space}>{this.state.data.postCount}</RkText>
+          <RkText rkType='header3' style={styles.space}></RkText>
           <RkText rkType='secondary1 hintColor'>Posts</RkText>
         </View>
         <View style={styles.section}>
-          <RkText rkType='header3' style={styles.space}>{formatNumber(this.state.data.followersCount)}</RkText>
+          <RkText rkType='header3' style={styles.space}></RkText>
           <RkText rkType='secondary1 hintColor'>Followers</RkText>
         </View>
         <View style={styles.section}>
@@ -51,12 +65,21 @@ export class ProfileV1 extends React.Component {
           <RkText rkType='secondary1 hintColor'>Following</RkText>
         </View>
       </View>
+      <View style={[styles.margin, styles.bordered]}>
+      <RkText rkType='header3' style={styles.space}>Email</RkText>
+      <RkText rkType='secondary1 hintColor'>{this.state.data.email}</RkText>
+      <RkText rkType='header3' style={styles.space}>Type</RkText>
+      <RkText rkType='secondary1 hintColor'>{this.state.data.type}</RkText>
+      <RkText rkType='header3' style={styles.space}>Telephone</RkText>
+      <RkText rkType='secondary1 hintColor'>{this.state.data.phone}</RkText>
+      </View>
+
       <View style={styles.buttons}>
         <RkButton style={styles.button} rkType='clear link'>FOLLOW</RkButton>
         <View style={styles.separator} />
         <RkButton style={styles.button} rkType='clear link'>MESSAGE</RkButton>
       </View>
-      <Gallery items={this.state.data.images} />
+     <Gallery/>
     </ScrollView>
   );
 }
@@ -100,5 +123,8 @@ const styles = RkStyleSheet.create(theme => ({
   button: {
     flex: 1,
     alignSelf: 'center',
+  },
+  margin:{
+    margin:4,
   },
 }));

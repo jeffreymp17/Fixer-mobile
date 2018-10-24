@@ -4,7 +4,7 @@ import {
   Image,
   Dimensions,
   Keyboard,
-  ScrollView,
+  ScrollView,AsyncStorage
 } from 'react-native';
 import {
   RkButton,
@@ -31,6 +31,7 @@ export class LoginV1 extends React.Component {
       userEmail:'',
       userPassword:''
     }
+
   }
   static propTypes = {
     navigation: NavigationType.isRequired,
@@ -40,7 +41,6 @@ export class LoginV1 extends React.Component {
   };
 
   login=()=>{
-    const apiURL='http://192.168.1.4:8000/api/';
     const {userEmail,userPassword}=this.state;
     const user={
       email:userEmail,
@@ -48,7 +48,7 @@ export class LoginV1 extends React.Component {
       app:"mobile"
     };
     Keyboard.dismiss();
-    fetch(`${apiURL}login`,{
+    fetch(`${UIConstants.URL}login`,{
       method:'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -64,6 +64,7 @@ export class LoginV1 extends React.Component {
       console.log("status",statusCode);
       console.log("data",data);
       if(statusCode==200){
+        AsyncStorage.setItem('currentUser', JSON.stringify(data));
         this.props.navigation.navigate('GridV1');
       }
     })

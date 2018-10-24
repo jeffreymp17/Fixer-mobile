@@ -16,7 +16,7 @@ import { SocialBar } from './socialBar';
 
 export class Gallery extends React.Component {
   static propTypes = {
-    items: PropTypes.arrayOf(PropTypes.node).isRequired,
+  //  items: PropTypes.arrayOf(PropTypes.node).isRequired,
   };
 
   constructor(props) {
