@@ -5,5 +5,5 @@ export class UIConstants {
   static StatusbarHeight = Platform.OS === 'ios' ? 20 : 0;
   static HeaderHeight = UIConstants.AppbarHeight + UIConstants.StatusbarHeight;
   static URL = 'http://192.168.1.5:8000/api/';
- //static URL = 'https://fixercr.herokuapp.com/api/';
+  static URL = 'https://fixercr.herokuapp.com/api/';
 }
