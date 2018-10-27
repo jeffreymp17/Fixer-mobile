@@ -20,7 +20,7 @@ export class Articles4 extends React.Component {
     navigation: NavigationType.isRequired,
   };
   static navigationOptions = {
-    title: 'Article List'.toUpperCase(),
+    title: 'List of orders'.toUpperCase(),
   };
 
   state = {

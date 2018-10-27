@@ -22,6 +22,7 @@
     "react-native-elements": "^0.19.1",
     "react-native-keyboard-spacer": "0.4.1",
     "react-native-linear-gradient": "2.4.0",
+    "react-native-maps": "^0.22.0",
     "react-native-modal-datetime-picker": "^6.0.0",
     "react-native-progress-bar": "0.1.2",
     "react-native-responsive-screen": "^1.1.9",

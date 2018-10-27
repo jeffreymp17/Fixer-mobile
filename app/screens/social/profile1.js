@@ -13,6 +13,7 @@ import { Gallery } from '../../components/gallery';
 import { data } from '../../data/';
 import formatNumber from '../../utils/textUtils';
 import NavigationType from '../../config/navigation/propTypes';
+import Toast from 'react-native-whc-toast'
 
 export class ProfileV1 extends React.Component {
   static propTypes = {
@@ -41,28 +42,65 @@ export class ProfileV1 extends React.Component {
 
       }
     }
+  logOut=()=>{
+    console.log("reduce");
+    const user={email:this.state.data.email,api_token:this.state.data.token}
+    fetch(`${UIConstants.URL}logout`,{
+      method:'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(user),
+    })
+    .then(response => {
+      const statusCode = response.status;
+      const data = response.json();
+      return Promise.all([statusCode, data]);
+    })
+    .then(([statusCode,data]) => {
+      console.log("status",statusCode);
+      console.log("data",data);
+      if(statusCode==200){
+        AsyncStorage.removeItem('currentUser').then(()=>{
+          console.log("yes");
+          this.refs.toast.show("Session closed");
+
+        });
+        const toHome = StackActions.reset({
+          index: 0,
+          actions: [NavigationActions.navigate({ routeName: 'Login' })],
+        });
+        this.props.navigation.dispatch(toHome);
+      }
+    })
+    .catch((error) =>{
+      console.error(error);
+    });
+
+  }
 
 
 }
 
   render = () => (
     <ScrollView style={styles.root}>
+    <Toast ref="toast"/>
       <View style={[styles.header, styles.bordered]}>
-        <Avatar img={'https://www.w3schools.com/w3css/img_lights.jpg'} rkType='big' />
+        <Avatar img={`${this.state.data.picture}`} rkType='big' />
         <RkText rkType='header2'>{`${this.state.data.name} ${this.state.data.lastname}`}</RkText>
       </View>
       <View style={[styles.userInfo, styles.bordered]}>
         <View style={styles.section}>
-          <RkText rkType='header3' style={styles.space}></RkText>
-          <RkText rkType='secondary1 hintColor'>Posts</RkText>
+          <RkText rkType='header3' style={styles.space}>{0}</RkText>
+          <RkText rkType='secondary1 hintColor'>Orders</RkText>
         </View>
         <View style={styles.section}>
-          <RkText rkType='header3' style={styles.space}></RkText>
+          <RkText rkType='header3' style={styles.space}>{0}</RkText>
           <RkText rkType='secondary1 hintColor'>Followers</RkText>
         </View>
         <View style={styles.section}>
-          <RkText rkType='header3' style={styles.space}>{this.state.data.followingCount}</RkText>
-          <RkText rkType='secondary1 hintColor'>Following</RkText>
+          <RkText rkType='header3' style={styles.space}>{0}</RkText>
+          <RkText rkType='secondary1 hintColor'>Score</RkText>
         </View>
       </View>
       <View style={[styles.margin, styles.bordered]}>
@@ -72,10 +110,12 @@ export class ProfileV1 extends React.Component {
       <RkText rkType='secondary1 hintColor'>{this.state.data.type}</RkText>
       <RkText rkType='header3' style={styles.space}>Telephone</RkText>
       <RkText rkType='secondary1 hintColor'>{this.state.data.phone}</RkText>
+      <RkText rkType='header3' style={styles.space}>Registar date</RkText>
+      <RkText rkType='secondary1 hintColor'>{this.state.data.register_date}</RkText>
       </View>
 
       <View style={styles.buttons}>
-        <RkButton style={styles.button} rkType='clear link'>FOLLOW</RkButton>
+        <RkButton style={styles.button} rkType='clear link' onPress={this.logOut}>LOG OUT</RkButton>
         <View style={styles.separator} />
         <RkButton style={styles.button} rkType='clear link'>MESSAGE</RkButton>
       </View>

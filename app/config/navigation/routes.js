@@ -233,6 +233,12 @@ export var MainRoutes = [
         screen: Screens.SideMenu,
         children: [],
       },
+      {
+        id: 'Maps',
+        title: 'Location',
+        screen: Screens.LocationMap,
+        children: [],
+      },
     ],
   },
   {

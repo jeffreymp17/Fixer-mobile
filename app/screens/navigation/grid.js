@@ -49,6 +49,10 @@
              case "DashboardsMenu":
              this.props.navigation.navigate('Dashboard');
              break;
+             case "NavigationMenu":
+            this.props.navigation.navigate('Maps');
+            break;
+
              default:
              break;
         }
@@ -71,6 +75,9 @@
             case "DashboardsMenu":
             auxRoutes.push(MainRoutes[i]);
             break;
+            case "NavigationMenu":
+           auxRoutes.push(MainRoutes[i]);
+           break;
             default:
             break;
           }
