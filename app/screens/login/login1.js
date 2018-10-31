@@ -20,6 +20,7 @@ import { scaleModerate, scaleVertical } from '../../utils/scale';
 import NavigationType from '../../config/navigation/propTypes';
 import {getUserLogged} from '../../api/ProfileService';
 import { UIConstants } from '../../config/appConstants';
+import { Permissions, Notifications } from 'expo';
 
 export class LoginV1 extends React.Component {
   componentDidMount(){
@@ -64,8 +65,11 @@ export class LoginV1 extends React.Component {
       console.log("status",statusCode);
       console.log("data",data);
       if(statusCode==200){
+        this.registerForPushNotificationsAsync();
         AsyncStorage.setItem('currentUser', JSON.stringify(data));
         this.props.navigation.navigate('GridV1');
+      //  this._getToken();
+
       }
     })
     .catch((error) =>{
@@ -101,6 +105,24 @@ export class LoginV1 extends React.Component {
     this.props.navigation.navigate('SignUp');
   };
 
+   async registerForPushNotificationsAsync() {
+    const { status: existingStatus } = await Permissions.getAsync(
+      Permissions.NOTIFICATIONS
+    );
+    let finalStatus = existingStatus;
+    if (existingStatus !== 'granted') {
+
+      const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+      finalStatus = status;
+    }
+    // Stop here if the user did not grant permissions
+    if (finalStatus !== 'granted') {
+      return;
+    }
+    let token = await Notifications.getExpoPushTokenAsync();
+
+    console.log("token",token);
+  }
   render = () => (
     <ScrollView>
 

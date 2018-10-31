@@ -8,8 +8,9 @@ import {
   RkStyleSheet,
   RkTheme,
 } from 'react-native-ui-kitten';
-import MapView from 'react-native-maps';
+import {Constants,MapView, Location, Permissions,AnimatedRegion, Animated,Marker,Expo } from 'expo';
 import { FontAwesome } from '../../assets/icons';
+import { PermissionsAndroid } from 'react-native';
 
 
 export class LocationMap extends React.Component {
@@ -18,24 +19,51 @@ export class LocationMap extends React.Component {
   };
 
   state = {
+    mapRegion: null,
+    hasLocationPermissions: false,
+    locationResult: null,
+    coordinates:null
+  };
 
+  componentDidMount() {
+    this._getLocationAsync();
+    this._handleMapRegionChange();
+  }
+
+  _handleMapRegionChange = mapRegion => {
+    console.log(mapRegion);
+    this.setState({ mapRegion });
+  };
+
+  _getLocationAsync = async () => {
+   let { status } = await Permissions.askAsync(Permissions.LOCATION);
+   if (status !== 'granted') {
+     this.setState({
+       locationResult: 'Permission to access location was denied',
+     });
+   } else {
+     this.setState({ hasLocationPermissions: true });
+   }
+
+   let location = await Location.getCurrentPositionAsync({enableHighAccuracy: true });
+   this.setState({ locationResult: JSON.stringify(location) });
+
+   // Center the map on the location we just fetched.
+    this.setState({mapRegion: { latitude: location.coords.latitude, longitude: location.coords.longitude, latitudeDelta: 0.0922, longitudeDelta: 0.0421,coordinates:{
+      latitude: location.coords.latitude, longitude: location.coords.longitude
+    } }});
+    console.log(this.state);
   };
 
 
 
   render = () => {
-    const chartBackgroundStyle = { backgroundColor: RkTheme.current.colors.control.background };
     return (
       <View style={styles.container}>
        <MapView
          style={styles.map}
-         region={{
-           latitude: 37.78825,
-           longitude: -122.4324,
-           latitudeDelta: 0.015,
-           longitudeDelta: 0.0121,
-         }}
-       >
+         region={
+           this.state.mapRegion} >
        </MapView>
      </View>
     );

@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   View,
-  ScrollView,AsyncStorage
+  ScrollView,AsyncStorage,Alert
 } from 'react-native';
 import {
   RkText,
@@ -9,11 +9,13 @@ import {
 } from 'react-native-ui-kitten';
 import { Avatar } from '../../components/avatar';
 import { Gallery } from '../../components/gallery';
-
 import { data } from '../../data/';
 import formatNumber from '../../utils/textUtils';
 import NavigationType from '../../config/navigation/propTypes';
-import Toast from 'react-native-whc-toast'
+import { UIConstants } from '../../config/appConstants';
+import {StackActions, NavigationActions } from 'react-navigation';
+
+
 
 export class ProfileV1 extends React.Component {
   static propTypes = {
@@ -42,49 +44,58 @@ export class ProfileV1 extends React.Component {
 
       }
     }
-  logOut=()=>{
-    console.log("reduce");
-    const user={email:this.state.data.email,api_token:this.state.data.token}
-    fetch(`${UIConstants.URL}logout`,{
-      method:'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(user),
-    })
-    .then(response => {
-      const statusCode = response.status;
-      const data = response.json();
-      return Promise.all([statusCode, data]);
-    })
-    .then(([statusCode,data]) => {
-      console.log("status",statusCode);
-      console.log("data",data);
-      if(statusCode==200){
-        AsyncStorage.removeItem('currentUser').then(()=>{
-          console.log("yes");
-          this.refs.toast.show("Session closed");
+}
+logOut=()=>{
+  console.log("reduce");
+  const user={email:this.state.data.email,api_token:this.state.data.token}
+  fetch(`${UIConstants.URL}logout`,{
+    method:'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(user),
+  })
+  .then(response => {
+    const statusCode = response.status;
+    const data = response.json();
+    return Promise.all([statusCode, data]);
+  })
+  .then(([statusCode,data]) => {
+    console.log("status",statusCode);
+    console.log("data",data);
+    if(statusCode==200){
+     this.clearProperties();
+    }
+  })
+  .catch((error) =>{
+    console.error(error);
+  });
 
-        });
-        const toHome = StackActions.reset({
-          index: 0,
-          actions: [NavigationActions.navigate({ routeName: 'Login' })],
-        });
-        this.props.navigation.dispatch(toHome);
-      }
-    })
-    .catch((error) =>{
-      console.error(error);
-    });
-
-  }
-
-
+}
+clearProperties=()=>{
+  AsyncStorage.removeItem('currentUser').then(()=>{
+    console.log("yes");
+  });
+  const toHome =StackActions.reset({
+    index: 0,
+    actions: [NavigationActions.navigate({ routeName: 'Login1' })],
+  });
+  this.props.navigation.dispatch(toHome);
+}
+confirmLogout=()=>{
+  Alert.alert(
+  'Exit',
+  'Are you sure to exit?',
+  [
+    {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+    {text: 'OK', onPress:  this.logOut},
+  ],
+  { cancelable: false }
+)
 }
 
   render = () => (
     <ScrollView style={styles.root}>
-    <Toast ref="toast"/>
       <View style={[styles.header, styles.bordered]}>
         <Avatar img={`${this.state.data.picture}`} rkType='big' />
         <RkText rkType='header2'>{`${this.state.data.name} ${this.state.data.lastname}`}</RkText>
@@ -115,7 +126,7 @@ export class ProfileV1 extends React.Component {
       </View>
 
       <View style={styles.buttons}>
-        <RkButton style={styles.button} rkType='clear link' onPress={this.logOut}>LOG OUT</RkButton>
+        <RkButton style={styles.button} rkType='clear link' onPress={this.confirmLogout}>LOG OUT</RkButton>
         <View style={styles.separator} />
         <RkButton style={styles.button} rkType='clear link'>MESSAGE</RkButton>
       </View>
@@ -159,6 +170,7 @@ const styles = RkStyleSheet.create(theme => ({
   buttons: {
     flexDirection: 'row',
     paddingVertical: 8,
+    margin:5
   },
   button: {
     flex: 1,

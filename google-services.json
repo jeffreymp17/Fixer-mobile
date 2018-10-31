@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "197431172148",
+    "firebase_url": "https://fixer-cr.firebaseio.com",
+    "project_id": "fixer-cr",
+    "storage_bucket": "fixer-cr.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:197431172148:android:2432e94504cb920a",
+        "android_client_info": {
+          "package_name": "com.nicoya.fixer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "197431172148-e6tga1sj3g8nnqh4n8gl656ir2qgt4mq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDw4GQ7dd8hA9NkY4S6EqotqvsJx8ud3To"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

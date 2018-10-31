@@ -19,7 +19,16 @@
     },
     "android": {
       "package": "com.nicoya.fixer",
-      "versionCode": 16
+      "versionCode": 16,
+      "googleServicesFile": "./google-services.json",
+      "config": {
+       "googleMaps":{
+         "apiKey": "AIzaSyDLjy-XtenYSnx0256CgOad1yC0giSJQLM"}
+
+      },
+      "permissions":["ACCESS_COARSE_LOCATION",
+      "ACCESS_FINE_LOCATION"
+      ]
     },
     "version": "1.0.10"
   }

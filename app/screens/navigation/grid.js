@@ -9,6 +9,8 @@
     } from 'react-native-ui-kitten';
     import { MainRoutes } from '../../config/navigation/routes';
     import NavigationType from '../../config/navigation/propTypes';
+    import {
+  Notifications} from 'expo';
 
     const paddingValue = 8;
     var auxRoutes=[];
@@ -21,9 +23,15 @@
         title: 'Menu'.toUpperCase(),
       };
 
-
+      state = {
+          notification: {},
+        };
+        componentDidMount(){
+          this._notificationSubscription = Notifications.addListener(this._handleNotification);
+        }
       constructor(props) {
         super(props);
+
         this.filterRoutes();
         const screenWidth = Dimensions.get('window').width;
         this.itemSize = {
@@ -31,6 +39,11 @@
           height: (screenWidth - (paddingValue * 6)) / 2,
         };
       }
+      _handleNotification = (notification) => {
+        this.setState({notification: notification});
+      };
+      
+
 
       onItemPressed = (item) => {
         switch(item.id){
