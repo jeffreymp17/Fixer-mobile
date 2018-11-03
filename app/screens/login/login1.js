@@ -40,7 +40,34 @@ export class LoginV1 extends React.Component {
   static navigationOptions = {
     header: null,
   };
+  sendTokenToServer(userId,token){
+    console.log("sender",token);
+    console.log("userId",userId);
 
+    let data={notification_token:token};
+    fetch(`${UIConstants.URL}users/${userId}/fcm`,{
+      method:'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+    .then(response => {
+      const statusCode = response.status;
+      const data = response.json();
+      return Promise.all([statusCode, data]);
+    })
+    .then(([statusCode,data]) => {
+      console.log("status",statusCode);
+      console.log("data",data);
+      if(statusCode==200){
+      console.log("save my token");
+      }
+    })
+    .catch((error) =>{
+      console.error(error);
+    });
+  }
   login=()=>{
     const {userEmail,userPassword}=this.state;
     const user={
@@ -65,7 +92,7 @@ export class LoginV1 extends React.Component {
       console.log("status",statusCode);
       console.log("data",data);
       if(statusCode==200){
-        this.registerForPushNotificationsAsync();
+        this.registerForPushNotificationsAsync(data.data.id);
         AsyncStorage.setItem('currentUser', JSON.stringify(data));
         this.props.navigation.navigate('GridV1');
       //  this._getToken();
@@ -105,7 +132,7 @@ export class LoginV1 extends React.Component {
     this.props.navigation.navigate('SignUp');
   };
 
-   async registerForPushNotificationsAsync() {
+   async registerForPushNotificationsAsync(userId) {
     const { status: existingStatus } = await Permissions.getAsync(
       Permissions.NOTIFICATIONS
     );
@@ -115,13 +142,14 @@ export class LoginV1 extends React.Component {
       const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
       finalStatus = status;
     }
-    // Stop here if the user did not grant permissions
     if (finalStatus !== 'granted') {
       return;
     }
     let token = await Notifications.getExpoPushTokenAsync();
-
+    this.sendTokenToServer(userId,token);
     console.log("token",token);
+    console.log("id",userId);
+
   }
   render = () => (
     <ScrollView>

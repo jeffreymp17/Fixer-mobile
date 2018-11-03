@@ -42,7 +42,7 @@
       _handleNotification = (notification) => {
         this.setState({notification: notification});
       };
-      
+
 
 
       onItemPressed = (item) => {
@@ -71,6 +71,7 @@
         }
       };
       filterRoutes=()=>{
+        auxRoutes=[];
         for(i =0;i<MainRoutes.length;i++){
           switch(MainRoutes[i].id){
             case "EcommerceMenu":
