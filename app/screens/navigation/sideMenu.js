@@ -15,16 +15,40 @@ import {
 import { MainRoutes } from '../../config/navigation/routes';
 import { FontAwesome } from '../../assets/icons';
 import NavigationType from '../../config/navigation/propTypes';
-var auxRoutes=[];
-
+auxRoutes=[];
 export class SideMenu extends React.Component {
   static propTypes = {
     navigation: NavigationType.isRequired,
   };
-
+constructor(props){
+  super(props);
+  this.filterRoutes();
+}
 
   onMenuItemPressed = (item) => {
-    this.props.navigation.navigate(item.id);
+    switch(item.id){
+      case "SocialMenu":
+      this.props.navigation.navigate("ProfileV1");
+       break;
+       case "EcommerceMenu":
+       this.props.navigation.navigate(item.id);
+         break;
+         case "ArticlesMenu":
+         this.props.navigation.navigate("Articles4");
+         break;
+         case "OtherMenu":
+         this.props.navigation.navigate(item.id);
+         break;
+         case "DashboardsMenu":
+         this.props.navigation.navigate('Dashboard');
+         break;
+         case "NavigationMenu":
+        this.props.navigation.navigate('Maps');
+        break;
+
+         default:
+         break;
+    }
   };
 
   getThemeImageSource = (theme) => (
@@ -35,8 +59,35 @@ export class SideMenu extends React.Component {
   renderIcon = () => (
     <Image style={styles.icon} source={this.getThemeImageSource(RkTheme.current)} />
   );
+  filterRoutes=()=>{
+    auxRoutes=[];
+    for(i =0;i<MainRoutes.length;i++){
+      switch(MainRoutes[i].id){
+        case "EcommerceMenu":
+        auxRoutes.push(MainRoutes[i]);
+        break;
+        case "ArticlesMenu":
+        auxRoutes.push(MainRoutes[i]);
+        break;
+        case "SocialMenu":
+        auxRoutes.push(MainRoutes[i]);
+        break;
+        case "OtherMenu":
+        auxRoutes.push(MainRoutes[i]);
+        break;
+        case "DashboardsMenu":
+        auxRoutes.push(MainRoutes[i]);
+        break;
+        case "NavigationMenu":
+       auxRoutes.push(MainRoutes[i]);
+       break;
+        default:
+        break;
+      }
+    }
 
-  renderMenu = () => MainRoutes.map(this.renderMenuItem);
+  }
+  renderMenu = () => auxRoutes.map(this.renderMenuItem);
 
   renderMenuItem = (item) => (
     <TouchableHighlight

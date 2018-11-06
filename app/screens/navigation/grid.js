@@ -25,14 +25,15 @@
 
       state = {
           notification: {},
+          filterRoutes:[]
         };
         componentDidMount(){
+          this.filterRoutes();
           this._notificationSubscription = Notifications.addListener(this._handleNotification);
+
         }
       constructor(props) {
         super(props);
-
-        this.filterRoutes();
         const screenWidth = Dimensions.get('window').width;
         this.itemSize = {
           width: (screenWidth - (paddingValue * 6)) / 2,
@@ -54,7 +55,7 @@
            this.props.navigation.navigate(item.id);
              break;
              case "ArticlesMenu":
-             this.props.navigation.navigate("Articles4");
+             this.props.navigation.navigate(item.id);
              break;
              case "OtherMenu":
              this.props.navigation.navigate(item.id);
@@ -96,8 +97,8 @@
             break;
           }
         }
-        console.log(auxRoutes);
-        console.log("Main routes:",MainRoutes);
+        this.setState({"filterRoutes":auxRoutes});
+
       }
 
       renderItems = () => auxRoutes.map(route => (

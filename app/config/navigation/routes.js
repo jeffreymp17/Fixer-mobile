@@ -109,12 +109,19 @@ export var MainRoutes = [
         screen: Screens.Articles3,
         children: [],
       },*/
+
       {
-        id: 'Articles4',
-        title: 'History of orders',
-        screen: Screens.Articles4,
-        children: [],
-      },
+          id: 'newOrder',
+          title: 'Create orders',
+          screen: Screens.newOrder,
+          children: [],
+        },
+        {
+          id: 'Articles4',
+          title: 'History of orders',
+          screen: Screens.Articles4,
+          children: [],
+        },
     /*  {
         id: 'Blogposts',
         title: 'Blogposts',
