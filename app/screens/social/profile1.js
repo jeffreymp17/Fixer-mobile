@@ -1,7 +1,8 @@
 import React from 'react';
 import {
   View,
-  ScrollView,AsyncStorage,Alert
+  ScrollView,AsyncStorage,Alert,
+  TouchableOpacity,
 } from 'react-native';
 import {
   RkText,
@@ -27,72 +28,88 @@ export class ProfileV1 extends React.Component {
   componentDidMount(){
     this.getUser();
   }
-  getUser=()=>{
-    AsyncStorage.getItem('currentUser', (err, result) => {
-     console.log("CURRENT USER",JSON.parse(result));
-     let user=JSON.parse(result);
-     this.setState({'data':user.data});
-     console.log("in state",this.state.data);
-  })
-
-  }
-
+  
   constructor(props) {
     super(props);
     this.state={
-      data:{
+      data:{},
+      isDiplay:true,
+    }
+  }
+  getUser=()=>{
+    AsyncStorage.getItem('currentUser', (err, result) => {
+      let user=JSON.parse(result);
+      user = user.data;
+      if(user.type == 'Technician'){ this.setState({isDiplay:false}); }
+      this.setState({data:user});
+    })
+  }
 
+  
+  logOut=()=>{
+    const user={email:this.state.data.email,api_token:this.state.data.token}
+    fetch(`${UIConstants.URL}logout`,{
+      method:'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(user),
+    })
+    .then(response => {
+      const statusCode = response.status;
+      const data = response.json();
+      return Promise.all([statusCode, data]);
+    })
+    .then(([statusCode,data]) => {
+      console.log("status",statusCode);
+      console.log("data",data);
+      if(statusCode==200){
+      this.clearProperties();
       }
-    }
-}
-logOut=()=>{
-  console.log("reduce");
-  const user={email:this.state.data.email,api_token:this.state.data.token}
-  fetch(`${UIConstants.URL}logout`,{
-    method:'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(user),
-  })
-  .then(response => {
-    const statusCode = response.status;
-    const data = response.json();
-    return Promise.all([statusCode, data]);
-  })
-  .then(([statusCode,data]) => {
-    console.log("status",statusCode);
-    console.log("data",data);
-    if(statusCode==200){
-     this.clearProperties();
-    }
-  })
-  .catch((error) =>{
-    console.error(error);
-  });
+    })
+    .catch((error) =>{
+      console.error(error);
+    });
+  }
 
-}
-clearProperties=()=>{
-  AsyncStorage.removeItem('currentUser').then(()=>{
-    console.log("yes");
-  });
-  const toHome =StackActions.reset({
-    index: 0,
-    actions: [NavigationActions.navigate({ routeName: 'Login1' })],
-  });
-  this.props.navigation.dispatch(toHome);
-}
-confirmLogout=()=>{
-  Alert.alert(
-  'Exit',
-  'Are you sure to exit?',
-  [
-    {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-    {text: 'OK', onPress:  this.logOut},
-  ],
-  { cancelable: false }
-)
-}
+  clearProperties=()=>{
+    AsyncStorage.removeItem('currentUser').then(()=>{
+      console.log("yes");
+    });
+    const toHome =StackActions.reset({
+      index: 0,
+      actions: [NavigationActions.navigate({ routeName: 'Login1' })],
+    });
+    this.props.navigation.dispatch(toHome);
+  }
+
+  confirmLogout=()=>{
+    Alert.alert(
+      'Exit',
+      'Are you sure to exit?',
+      [
+        {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+        {text: 'OK', onPress:  this.logOut},
+      ],
+      { cancelable: false }
+    )
+  }
+
+  goToSpecialty = () =>{
+    this.props.navigation.navigate('TechnicianCategories');
+  }
+
+  renderButtons = () =>{
+    const {isDiplay} = this.state;
+    return <View style={styles.buttons}>
+      <RkButton  style={styles.button} rkType='clear link' 
+        onPress={this.confirmLogout}>LOG OUT</RkButton>
+      <View style={styles.separator} />
+      {!isDiplay && <RkButton style={styles.button}
+        rkType='clear link'
+        onPress={this.goToSpecialty}>SPECIALTIES</RkButton>}
+    </View>
+  }
 
   render = () => (
     <ScrollView style={styles.root}>
@@ -125,12 +142,8 @@ confirmLogout=()=>{
       <RkText rkType='secondary1 hintColor'>{this.state.data.register_date}</RkText>
       </View>
 
-      <View style={styles.buttons}>
-        <RkButton style={styles.button} rkType='clear link' onPress={this.confirmLogout}>LOG OUT</RkButton>
-        <View style={styles.separator} />
-        <RkButton style={styles.button} rkType='clear link'>MESSAGE</RkButton>
-      </View>
-     <Gallery/>
+      {this.renderButtons()}
+     
     </ScrollView>
   );
 }

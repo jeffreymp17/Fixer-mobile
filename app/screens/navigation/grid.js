@@ -99,6 +99,7 @@
         }
         this.setState({"filterRoutes":auxRoutes});
 
+
       }
 
       renderItems = () => auxRoutes.map(route => (
