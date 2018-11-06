@@ -96,8 +96,6 @@
             break;
           }
         }
-        console.log(auxRoutes);
-        console.log("Main routes:",MainRoutes);
       }
 
       renderItems = () => auxRoutes.map(route => (

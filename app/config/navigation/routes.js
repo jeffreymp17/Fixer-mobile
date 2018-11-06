@@ -22,6 +22,12 @@ export var MainRoutes = [
         children: [],
       },
       {
+        id: 'TechnicianCategories',
+        title: 'Categories',
+        screen: Screens.TechnicianCategories,
+        children: [],
+      },
+      {
         id: 'SignUp',
         title: 'Sign Up',
         screen: Screens.SignUp,

@@ -21,6 +21,8 @@ import NavigationType from '../../config/navigation/propTypes';
 import {getUserLogged} from '../../api/ProfileService';
 import { UIConstants } from '../../config/appConstants';
 import { Permissions, Notifications } from 'expo';
+import Toast from 'react-native-whc-toast'
+
 
 export class LoginV1 extends React.Component {
   componentDidMount(){
@@ -32,7 +34,6 @@ export class LoginV1 extends React.Component {
       userEmail:'',
       userPassword:''
     }
-
   }
   static propTypes = {
     navigation: NavigationType.isRequired,
@@ -41,8 +42,6 @@ export class LoginV1 extends React.Component {
     header: null,
   };
   sendTokenToServer(userId,token){
-    console.log("sender",token);
-    console.log("userId",userId);
 
     let data={notification_token:token};
     fetch(`${UIConstants.URL}users/${userId}/fcm`,{
@@ -58,8 +57,6 @@ export class LoginV1 extends React.Component {
       return Promise.all([statusCode, data]);
     })
     .then(([statusCode,data]) => {
-      console.log("status",statusCode);
-      console.log("data",data);
       if(statusCode==200){
       console.log("save my token");
       }
@@ -89,14 +86,16 @@ export class LoginV1 extends React.Component {
       return Promise.all([statusCode, data]);
     })
     .then(([statusCode,data]) => {
-      console.log("status",statusCode);
-      console.log("data",data);
+      
       if(statusCode==200){
-        this.registerForPushNotificationsAsync(data.data.id);
+        let user = data.data;
+        this.registerForPushNotificationsAsync(user.id);
         AsyncStorage.setItem('currentUser', JSON.stringify(data));
-        this.props.navigation.navigate('GridV1');
-      //  this._getToken();
-
+        this.getCategories(user);
+        //  this._getToken();
+      }
+      else{
+        this.refs.toast.show(data[0]);
       }
     })
     .catch((error) =>{
@@ -147,19 +146,33 @@ export class LoginV1 extends React.Component {
     }
     let token = await Notifications.getExpoPushTokenAsync();
     this.sendTokenToServer(userId,token);
-    console.log("token",token);
-    console.log("id",userId);
-
   }
+
+  async getCategories(user){
+    if(user.type == 'Technician'){  
+      let result = await fetch(`${UIConstants.URL}technician/${user.userable.id}/categories`);
+      let data = await result.json();
+      if(data.quantity == 0){
+        this.props.navigation.navigate('TechnicianCategories',{from:'login'});
+      }
+      else{
+        this.props.navigation.navigate('GridV1');   
+      }
+    }
+    else{
+      this.props.navigation.navigate('GridV1'); 
+    }
+  } 
+
   render = () => (
     <ScrollView>
-
-    <RkAvoidKeyboard
+    <View
       onStartShouldSetResponder={() => true}
       onResponderRelease={() => Keyboard.dismiss()}
       style={styles.screen}>
       {this.renderImage()}
       <View style={styles.container}>
+      <Toast ref="toast"/>
         <View style={styles.buttons}>
           <RkButton style={styles.button} rkType='social'>
             <RkText rkType='awesome hero accentColor'>{FontAwesome.twitter}</RkText>
@@ -171,7 +184,7 @@ export class LoginV1 extends React.Component {
             <RkText rkType='awesome hero accentColor'>{FontAwesome.facebook}</RkText>
           </RkButton>
         </View>
-        <RkTextInput rkType='rounded' placeholder='Username' onChangeText={userEmail=>this.setState({userEmail})} />
+        <RkTextInput rkType='rounded' placeholder='Email' onChangeText={userEmail=>this.setState({userEmail})} />
         <RkTextInput rkType='rounded' placeholder='Password' secureTextEntry onChangeText={userPassword=>this.setState({userPassword})} />
         <GradientButton
           style={styles.save}
@@ -188,7 +201,7 @@ export class LoginV1 extends React.Component {
           </View>
         </View>
       </View>
-    </RkAvoidKeyboard>
+    </View>
     </ScrollView>
   )
 }
