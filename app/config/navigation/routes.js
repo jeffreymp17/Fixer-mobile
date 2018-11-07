@@ -124,22 +124,20 @@ export var MainRoutes = [
         },
         {
           id: 'Articles4',
-          title: 'History of orders',
+          title: 'My orders',
           screen: Screens.Articles4,
-          children: [],
+          children: [
+           
+          ],
         },
+        
     /*  {
         id: 'Blogposts',
         title: 'Blogposts',
         screen: Screens.Blogposts,
         children: [],
-      },
-      {
-        id: 'Article',
-        title: 'Article View',
-        screen: Screens.Article,
-        children: [],
       },*/
+      
     ],
   },
   {
@@ -273,6 +271,12 @@ export var MainRoutes = [
     title: 'Themes',
     icon: FontIcons.theme,
     screen: Screens.Themes,
+    children: [],
+  },
+  {
+    id: 'OrderDetail',
+    title: 'Detail',
+    screen: Screens.Article,
     children: [],
   },
 ];
