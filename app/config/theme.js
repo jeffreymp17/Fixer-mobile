@@ -2,7 +2,7 @@ import { scale } from '../utils/scale';
 
 const Colors = {
   accent: '#FFC107',
-  primary: '#303F9F',
+  primary: '#76c2af',
   success: '#3bd555',
   disabled: '#cacaca',
 
@@ -25,8 +25,8 @@ const Colors = {
   google: '#e94335',
   facebook: '#3b5998',
 
-  gradientBaseBegin: '#303F9F',
-  gradientBaseEnd: '#1CB5E0',
+  gradientBaseBegin: '#76c2af',
+  gradientBaseEnd: '#93f2da',
   gradientVisaBegin: '#63e2ff',
   gradientVisaEnd: '#712ec3',
   gradientMasterBegin: '#febb5b',
