@@ -11,7 +11,6 @@ import {
   RkStyleSheet,
 } from 'react-native-ui-kitten';
 import { SocialBar } from '../../components';
-import { data } from '../../data';
 import NavigationType from '../../config/navigation/propTypes';
 import { AsyncStorage } from "react-native"
 import { UIConstants } from '../../config/appConstants';
@@ -50,6 +49,10 @@ export class Articles4 extends React.Component {
     this.setState({orders:orders.data});  
   }
 
+  handleOnPress = item =>()=> {
+    this.props.navigation.navigate('OrderDetail',{order:item})
+  }
+
   extractItemKey = (item) => `${item.id}`;
   renderStatus = (is_finish,text) =>{
     if(is_finish){
@@ -72,8 +75,8 @@ export class Articles4 extends React.Component {
     <TouchableOpacity
       delayPressIn={70}
       activeOpacity={0.8}
-      onPress={() => this.props.navigation.navigate('Article', { id: item.id })}>
-      <RkCard rkType='horizontal' style={styles.card}>
+      onPress={this.handleOnPress(item)}>
+      <RkCard rkType='horizontal' style={styles.card} >
         <Image rkCardImg source={{uri:item.photo}} />
         <View rkCardContent>
           <RkText numberOfLines={1} rkType='header6'>{item.breakdown}</RkText>

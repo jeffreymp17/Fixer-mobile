@@ -122,7 +122,9 @@
     backToMenu=()=>{
       this.props.navigation.navigate("GridV1");
     }
-    componentDidMount() {
+    async componentDidMount() {
+      await Font.loadAsync({MaterialIcons})
+      this.setState({ fontsAreLoaded: true })
       Expo.Location.getProviderStatusAsync().then((permission)=>{
         console.log("Permissions:",permission);
         if(!permission.gpsAvailable){
@@ -131,9 +133,6 @@
         }else{
           this._getLocationAsync();
           this._handleMapRegionChange();
-          Font.loadAsync({
-           MaterialIcons})
-         this.setState({ fontsAreLoaded: true })
          this.getCategoriesAndBreakdownsFromApi();
          this.getUser();
         }
@@ -161,8 +160,6 @@
      // Center the map on the location we just fetched.
       this.setState({mapRegion: { latitude: location.coords.latitude, longitude: location.coords.longitude, latitudeDelta: 0.0922, longitudeDelta: 0.0421 }});
       this.setState({latlng:{ latitude: location.coords.latitude, longitude: location.coords.longitude}});
-    console.log(this.state);
-
     };
     onClickButtonSave=()=>{
       this.createOrder();
@@ -173,6 +170,7 @@
       render=()=>(
         <ScrollView style={styles.root}>
         <View style={styles.multiSelect}>
+        { this.state.fontsAreLoaded ? (
           <SectionedMultiSelect
             items={this.state.items}
             single={true}
@@ -184,10 +182,10 @@
             animateDropDowns={true}
             modalAnimationType={'slide'}
             onSelectedItemsChange={this.onSelectedItemsChange}
-            selectedItems={this.state.selectedItems}
-
-          />
-
+            selectedItems={this.state.selectedItems}/>
+          ) : null
+        }
+          
         </View>
         <View style={styles.container}>
          <MapView
@@ -261,11 +259,11 @@
       alignItems: 'center',
     },
     map: {
-    marginTop:4,
-  borderRadius: 8,
-  height: 390,
-  width: '100%',
-  shadowOffset: {width: 16.4, height: 1.6},
-      height:'99%',
-  },
+      marginTop:4,
+      borderRadius: 8,
+      height: 390,
+      width: '100%',
+      shadowOffset: {width: 16.4, height: 1.6},
+        height:'99%',
+    },
     }));
