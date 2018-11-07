@@ -101,9 +101,8 @@
         .then(([statusCode,data]) => {
           console.log("status",statusCode);
           console.log("data",data);
-          if(statusCode==200){
-            cosole.log("Successful");
-          }
+          this.dialog('New order',
+          'Successful created');
         })
         .catch((error) =>{
           console.error(error);
@@ -111,10 +110,9 @@
       }
 
 
-    gpsDialog=()=>{
+    dialog=(title,description)=>{
       Alert.alert(
-      'Location services',
-      'Turn on GPS services manually ',
+      title,description,
       [
         {text: 'OK',onPress:this.backToMenu},
       ],
@@ -128,7 +126,8 @@
       Expo.Location.getProviderStatusAsync().then((permission)=>{
         console.log("Permissions:",permission);
         if(!permission.gpsAvailable){
-          this.gpsDialog();
+          this.Dialog('Location services',
+          'Turn on GPS services manually ');
         }else{
           this._getLocationAsync();
           this._handleMapRegionChange();
