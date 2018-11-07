@@ -13,6 +13,8 @@ import {
 import { SocialBar } from '../../components';
 import { data } from '../../data';
 import NavigationType from '../../config/navigation/propTypes';
+import { AsyncStorage } from "react-native"
+import { UIConstants } from '../../config/appConstants';
 
 
 export class Articles4 extends React.Component {
@@ -20,28 +22,64 @@ export class Articles4 extends React.Component {
     navigation: NavigationType.isRequired,
   };
   static navigationOptions = {
-    title: 'List of orders'.toUpperCase(),
+    title: 'My orders'.toUpperCase(),
   };
 
+  constructor(props){
+    super(props);
+    this.getOrders();
+  }
   state = {
-    data: data.getArticles(),
+    orders:[],
+    user:'',
+    msg:'Loading...'
   };
+
+  getOrders = async()=> {
+    let res = await AsyncStorage.getItem('currentUser');
+    this.setState({user:JSON.parse(res).data});
+    const { user } = this.state;
+    let result = [];
+    if(user.type == 'Technician'){  
+      result = await fetch(`${UIConstants.URL}order/by/technician/${user.userable.id}`);
+    }
+    else{
+      result = await fetch(`${UIConstants.URL}order/by/customer/${user.userable.id}`);
+    }
+    let orders = await result.json(); 
+    this.setState({orders:orders.data});  
+  }
 
   extractItemKey = (item) => `${item.id}`;
-
+  renderStatus = (is_finish,text) =>{
+    if(is_finish){
+      return <RkText style={styles.post} numberOfLines={1} rkType='secondary5'> {text}</RkText>
+    }
+    return <RkText style={styles.post} numberOfLines={1} rkType='success'> {text}</RkText>
+  }
+  renderCustomer = (item)=>{
+    if(item.score==null){
+      return <RkText rkType='secondary6 hintColor'>
+        {item.customer}
+      </RkText>
+    }
+    return <RkText rkType='secondary6 hintColor'>
+      {item.customer}{', score: '+item.score}
+    </RkText>
+    
+  }
   renderItem = ({ item }) => (
     <TouchableOpacity
       delayPressIn={70}
       activeOpacity={0.8}
       onPress={() => this.props.navigation.navigate('Article', { id: item.id })}>
       <RkCard rkType='horizontal' style={styles.card}>
-        <Image rkCardImg source={item.photo} />
+        <Image rkCardImg source={{uri:item.photo}} />
         <View rkCardContent>
-          <RkText numberOfLines={1} rkType='header6'>{item.header}</RkText>
-          <RkText rkType='secondary6 hintColor'>
-            {`${item.user.firstName} ${item.user.lastName}`}
-          </RkText>
-          <RkText style={styles.post} numberOfLines={2} rkType='secondary1'>{item.text}</RkText>
+          <RkText numberOfLines={1} rkType='header6'>{item.breakdown}</RkText>
+          {this.renderCustomer(item)}
+          <RkText style={styles.post} numberOfLines={1} rkType='secondary6'>{item.created_at}</RkText>
+          {this.renderStatus(item.is_finish,item.finish_at)}
         </View>
         <View rkCardFooter>
           <SocialBar rkType='space' showLabel />
@@ -53,7 +91,7 @@ export class Articles4 extends React.Component {
   render = () => (
     <View>
       <FlatList
-        data={this.state.data}
+        data={this.state.orders}
         renderItem={this.renderItem}
         keyExtractor={this.extractItemKey}
         style={styles.container}
@@ -73,6 +111,6 @@ const styles = RkStyleSheet.create(theme => ({
     marginVertical: 8,
   },
   post: {
-    marginTop: 13,
+    marginTop: 2,
   },
 }));

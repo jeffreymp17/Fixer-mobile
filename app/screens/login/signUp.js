@@ -158,7 +158,7 @@ export class SignUp extends React.Component {
         onResponderRelease={() => Keyboard.dismiss()}>
         <View style={{ alignItems: 'center' }}>
           {this.renderImage()}
-          <RkText rkType='h1'>Customer</RkText>
+          <RkText rkType='h1'>Register</RkText>
         </View>
         <View style={styles.content}>
         <Toast ref="toast"/>
