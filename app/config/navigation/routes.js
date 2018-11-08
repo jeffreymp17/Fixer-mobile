@@ -130,6 +130,14 @@ export var MainRoutes = [
            
           ],
         },
+        {
+          id: 'AvaliablesOrders',
+          title: 'Avaliables Orders',
+          screen: Screens.AvaliablesOrders,
+          children: [
+           
+          ],
+        },
         
     /*  {
         id: 'Blogposts',
@@ -277,6 +285,12 @@ export var MainRoutes = [
     id: 'OrderDetail',
     title: 'Detail',
     screen: Screens.Article,
+    children: [],
+  },
+  {
+    id: 'Score',
+    title: 'Score',
+    screen: Screens.Score,
     children: [],
   },
 ];

@@ -34,6 +34,8 @@ export class ProfileV1 extends React.Component {
     this.state={
       data:{},
       isDiplay:true,
+      orders:0,
+      score:0,
     }
   }
   getUser=()=>{
@@ -42,7 +44,18 @@ export class ProfileV1 extends React.Component {
       user = user.data;
       if(user.type == 'Technician'){ this.setState({isDiplay:false}); }
       this.setState({data:user});
+      this.getStatistics(user);
     })
+  }
+
+  getStatistics = async(user) => {
+    let id = user.userable.id;
+    let url = user.type == 'Technician' ? `${UIConstants.URL}technician/${id}` : `${UIConstants.URL}customer/${id}`;
+    let result = await fetch(url);
+    let response =  await result.json();
+    console.log("response",response);
+    this.setState({orders:response.orders});
+    this.setState({score:response.score});
   }
 
   
@@ -61,8 +74,6 @@ export class ProfileV1 extends React.Component {
       return Promise.all([statusCode, data]);
     })
     .then(([statusCode,data]) => {
-      console.log("status",statusCode);
-      console.log("data",data);
       if(statusCode==200){
       this.clearProperties();
       }
@@ -119,7 +130,7 @@ export class ProfileV1 extends React.Component {
       </View>
       <View style={[styles.userInfo, styles.bordered]}>
         <View style={styles.section}>
-          <RkText rkType='header3' style={styles.space}>{0}</RkText>
+          <RkText rkType='header3' style={styles.space}>{this.state.orders}</RkText>
           <RkText rkType='secondary1 hintColor'>Orders</RkText>
         </View>
         <View style={styles.section}>
@@ -127,7 +138,7 @@ export class ProfileV1 extends React.Component {
           <RkText rkType='secondary1 hintColor'>Followers</RkText>
         </View>
         <View style={styles.section}>
-          <RkText rkType='header3' style={styles.space}>{0}</RkText>
+          <RkText rkType='header3' style={styles.space}>{this.state.score}</RkText>
           <RkText rkType='secondary1 hintColor'>Score</RkText>
         </View>
       </View>

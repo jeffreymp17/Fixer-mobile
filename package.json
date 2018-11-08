@@ -29,6 +29,7 @@
     "react-native-responsive-screen": "^1.1.9",
     "react-native-sectioned-multi-select": "^0.6.2",
     "react-native-simple-radio-button": "^2.7.3",
+    "react-native-star-rating": "^1.1.0",
     "react-native-svg": "^6.5.2",
     "react-native-switch-pro": "0.4.6",
     "react-native-ui-kitten": "3.0.1",

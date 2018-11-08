@@ -2,7 +2,6 @@ import React from 'react';
 
 import {
   ScrollView,
-  Image,
   View,
   TouchableOpacity,
 } from 'react-native';
@@ -12,14 +11,11 @@ import {
   RkButton,
   RkStyleSheet,
 } from 'react-native-ui-kitten';
-import { data } from '../../data';
-import {
-  Avatar,
-  SocialBar,
-} from '../../components';
+import { Avatar } from '../../components';
 import NavigationType from '../../config/navigation/propTypes';
 import {MapView,Permissions} from 'expo';
-const moment = require('moment');
+import { AsyncStorage } from "react-native"
+import { UIConstants } from '../../config/appConstants';
 
 export class Article extends React.Component {
   static propTypes = {
@@ -34,14 +30,18 @@ export class Article extends React.Component {
     this.order = this.props.navigation.getParam('order', {});
   }
 
+  componentWillMount(){
+    this.getUser();
+  }
+
   state ={
     mapRegion: null,
     hasLocationPermissions: false,
     latlng:{
       latitude:9.934739,
       longitude:-84.087502
-
     },
+    user:{},
   }
 
   componentDidMount(){
@@ -73,12 +73,83 @@ export class Article extends React.Component {
         longitudeDelta: locations[0].longitude_delta}});
      this.setState({latlng:{ latitude: locations[0].latitude, longitude: locations[0].longitude}});
    };
-   onClickButtonSave=()=>{
-     this.createOrder();
-   }
+
+  getUser = async()=> {
+    let res = await AsyncStorage.getItem('currentUser');
+    this.setState({user:JSON.parse(res).data});
+  }
+
+  renderScore=()=>{
+    if(this.order.has_score){
+      return <RkText rkType='primary3 bigLine' numberOfLines={1} >{"Score: "+this.order.service_score}</RkText>       
+    }
+    return null;
+  }
+
+  repairOrder = async() => {
+    const {user:{userable:{id}}} = this.state;
+    let json = {technician_id:id};
+    let result = await fetch(`${UIConstants.URL}order/${this.order.id}/repair`,{
+      method:'POST',
+      headers: {'Content-Type': 'application/json'},
+      body:JSON.stringify(json),
+    });
+
+    if(result.status == 200){
+      this.props.navigation.navigate('Articles4');
+      return await result.json();
+    }
+    throw new Error(result.status);
+  }
+
+  cancelOrder = async() => {
+    let result = await fetch(`${UIConstants.URL}order/${this.order.id}`,{
+      method:'DELETE',
+      headers: {'Content-Type': 'application/json'},
+    });
+
+    if(result.status == 204){
+      this.props.navigation.navigate('Articles4');
+      return await result.json();
+    }
+    throw new Error(result.status);
+  }
+
+  finishOrder = async() => {
+    let result = await fetch(`${UIConstants.URL}order/${this.order.id}/finish`,{
+      method:'POST',
+      headers: {'Content-Type': 'application/json'},
+    });
+
+    if(result.status == 200){
+      this.props.navigation.navigate('Score',{
+        order_id:this.order.id,
+        technician_id:this.order.technician_id
+      });
+      return await result.json();
+    }
+    throw new Error(result.status);
+  }
 
 
-
+  renderButton = () =>{
+    const {user} = this.state;
+    switch (this.order.finish_at) {
+        case "Active":
+          if(user.type=="Technician"){
+            return <RkButton style={styles.button} onPress={this.repairOrder} rkType='success'>Repair</RkButton>;
+          }
+          else{
+            return <RkButton  style={styles.button}  onPress={this.cancelOrder} rkType='danger'>Cancel</RkButton>;
+          }
+        case "Repairing": 
+          if(user.type=="Customer"){
+            return <RkButton  style={styles.button} onPress={this.finishOrder} rkType='primary'>Finish</RkButton>;
+          }
+         break;
+        default: return null;
+    }
+  }
 
   render = () => (
     <ScrollView style={styles.root}>
@@ -115,13 +186,13 @@ export class Article extends React.Component {
       </View>
       <View rkCardContent>
         <View>
-          <RkText rkType='primary3 bigLine' numberOfLines={1} >{"Status: "+this.order.finish_at}</RkText>
-          <RkText rkType='primary3 bigLine' numberOfLines={1} >{"Technician: "+this.order.technician}</RkText>
-          <RkText rkType='primary3 bigLine' numberOfLines={1} >{"Score: "+this.order.service_score}</RkText>
+          <RkText rkType='primary3 bigLine' numberOfLines={1} >{this.order.finish_at}</RkText>
+          <RkText rkType='primary3 bigLine'>{"Technician: "+this.order.technician}</RkText>
+          {/*this.renderScore()*/}
         </View>
       </View>
       <View rkCardFooter>
-        <RkButton rkType='success'>Accept</RkButton>
+        {this.renderButton()}
       </View> 
       </RkCard>
     </ScrollView>
@@ -142,6 +213,9 @@ const styles = RkStyleSheet.create(theme => ({
     width: '100%',
     shadowOffset: {width: 16.4, height: 1.6},
       height:'99%',
+  },
+  button:{
+    width: '100%',
   },
   container: {
     flex: 1,

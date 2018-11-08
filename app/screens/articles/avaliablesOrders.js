@@ -16,12 +16,12 @@ import { AsyncStorage } from "react-native"
 import { UIConstants } from '../../config/appConstants';
 
 
-export class Articles4 extends React.Component {
+export class AvaliablesOrders extends React.Component {
   static propTypes = {
     navigation: NavigationType.isRequired,
   };
   static navigationOptions = {
-    title: 'My orders'.toUpperCase(),
+    title: 'Availables Orders'.toUpperCase(),
   };
 
   constructor(props){
@@ -38,15 +38,9 @@ export class Articles4 extends React.Component {
     let res = await AsyncStorage.getItem('currentUser');
     this.setState({user:JSON.parse(res).data});
     const { user } = this.state;
-    let result = [];
-    if(user.type == 'Technician'){
-      result = await fetch(`${UIConstants.URL}order/by/technician/${user.userable.id}`);
-    }
-    else{
-      result = await fetch(`${UIConstants.URL}order/by/customer/${user.userable.id}`);
-    }
-    let orders = await result.json();
-    this.setState({orders:orders.data});
+    let result = await fetch(`${UIConstants.URL}order/availables/${user.userable.id}`);
+    let orders = await result.json(); 
+    this.setState({orders:orders.data});  
   }
 
   handleOnPress = item =>()=> {
@@ -54,34 +48,23 @@ export class Articles4 extends React.Component {
   }
 
   extractItemKey = (item) => `${item.id}`;
-  renderStatus = (text) =>{
-    switch (text) {
-      case "Active":  return <RkText style={styles.post} numberOfLines={1} rkType='success'> {text}</RkText>
-      case "Repairing":  return <RkText style={styles.post} numberOfLines={1} rkType='primary'> {text}</RkText>
-      default:return <RkText style={styles.post} numberOfLines={1} rkType='secondary5'> {text}</RkText>
+  renderStatus = (is_finish,text) =>{
+    if(is_finish){
+      return <RkText style={styles.post} numberOfLines={1} rkType='secondary5'> {text}</RkText>
     }
-   
+    return <RkText style={styles.post} numberOfLines={1} rkType='success'> {text}</RkText>
   }
-  renderUser = (item)=>{
-    let user=item.customer;
-    if(user.type=="Customer"){
-      user = item.technician;
-    }
+  renderCustomer = (item)=>{
     if(item.score==null){
       return <RkText rkType='secondary6 hintColor'>
-        {user}
+        {item.customer}
       </RkText>
     }
     return <RkText rkType='secondary6 hintColor'>
-      {user}{', score: '+item.score}
+      {item.customer}{', score: '+item.score}
     </RkText>
-
+    
   }
-  noItemDisplay = () => (
-    <View >
-      <RkText style={styles.center} rkType='header4 hintColor'>{this.state.msg}</RkText>
-    </View>
-  );
   renderItem = ({ item }) => (
     <TouchableOpacity
       delayPressIn={70}
@@ -91,15 +74,21 @@ export class Articles4 extends React.Component {
         <Image rkCardImg source={{uri:item.photo}} />
         <View rkCardContent>
           <RkText numberOfLines={1} rkType='header6'>{item.breakdown}</RkText>
-          {this.renderUser(item)}
+          {this.renderCustomer(item)}
           <RkText style={styles.post} numberOfLines={1} rkType='secondary6'>{item.created_at}</RkText>
-          {this.renderStatus(item.finish_at)}
+          {this.renderStatus(item.is_finish,item.finish_at)}
         </View>
         <View rkCardFooter>
           <SocialBar rkType='space' showLabel />
         </View >
       </RkCard>
     </TouchableOpacity>
+  );
+
+  noItemDisplay = () => (
+    <View >
+      <RkText style={styles.center} rkType='header4 hintColor'>{this.state.msg}</RkText>
+    </View>
   );
 
   render = () => (
@@ -132,4 +121,5 @@ const styles = RkStyleSheet.create(theme => ({
     textAlign: 'center',
     width: '100%',
   }
+
 }));
