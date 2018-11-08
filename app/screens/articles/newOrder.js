@@ -167,7 +167,7 @@ export class newOrder extends React.Component {
     }
     onDragPosition=(position)=>{
       console.log("IN STATE:",position.nativeEvent);
-
+      this.state.latlng=position.nativeEvent.coordinate;
       console.log("---------------------__>:",this.state.latlng)
     }
 
