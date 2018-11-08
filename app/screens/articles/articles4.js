@@ -39,14 +39,14 @@ export class Articles4 extends React.Component {
     this.setState({user:JSON.parse(res).data});
     const { user } = this.state;
     let result = [];
-    if(user.type == 'Technician'){  
+    if(user.type == 'Technician'){
       result = await fetch(`${UIConstants.URL}order/by/technician/${user.userable.id}`);
     }
     else{
       result = await fetch(`${UIConstants.URL}order/by/customer/${user.userable.id}`);
     }
-    let orders = await result.json(); 
-    this.setState({orders:orders.data});  
+    let orders = await result.json();
+    this.setState({orders:orders.data});
   }
 
   handleOnPress = item =>()=> {
@@ -69,7 +69,7 @@ export class Articles4 extends React.Component {
     return <RkText rkType='secondary6 hintColor'>
       {item.customer}{', score: '+item.score}
     </RkText>
-    
+
   }
   renderItem = ({ item }) => (
     <TouchableOpacity
