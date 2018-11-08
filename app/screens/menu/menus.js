@@ -4,6 +4,7 @@ import React from 'react';
 import { CategoryMenu } from './categoryMenu';
 import * as Routes from '../../config/navigation/routesBuilder';
 import NavigationType from '../../config/navigation/propTypes';
+import { AsyncStorage } from "react-native"
 
 export class LoginMenu extends React.Component {
   static propTypes = {
@@ -48,9 +49,33 @@ export class ArticleMenu extends React.Component {
   static navigationOptions = {
     title: 'Orders'.toUpperCase(),
   };
-  render = () => (
-    <CategoryMenu navigation={this.props.navigation} items={Routes.ArticleRoutes} />
-  );
+  constructor(){
+    super();
+    this.getUser();
+  }
+  state ={
+    menu:[],
+    user:{}
+  }
+  getUser = async()=> {
+    let res = await AsyncStorage.getItem('currentUser');
+    this.setState({user:JSON.parse(res).data});
+    await this.filterMenu();
+  }
+  filterMenu = async() =>{
+    let menu = [];
+    let exclude = "";
+    const { user } = this.state;
+    await Routes.ArticleRoutes.forEach((route)=>{
+      exclude = user.type=="Technician" ? "newOrder" : "AvaliablesOrders";
+      if(route.id !== exclude){
+        menu.push(route);
+      }
+    });
+    this.setState({menu});
+  }
+
+  render = () => (<CategoryMenu navigation={this.props.navigation} items={this.state.menu} />);
 }
 
 export class MessagingMenu extends React.Component {
